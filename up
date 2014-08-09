@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH.unshift(File.dirname($0))
+require 'version'
+
+dir = ARGV[0] || '.'
+exit(Version.update(dir))

@@ -1,0 +1,25 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH.unshift(File.dirname($0))
+require 'version'
+
+SRC_DIR = "#{ENV['HOME']}/src"
+
+if ARGV.length == 0
+  Dir.chdir(SRC_DIR)
+  noups = File.readlines('.noup').map { |l| l.strip } rescue []
+  dir_list = Dir.entries(SRC_DIR).reject { |dir| /^\./.match(dir) or /noup$/.match(dir) or noups.include?(dir) }
+else
+  dir_list = ARGV
+end
+
+failures = []
+
+dir_list.each do  |dir|
+  next unless File.directory?(dir) or File.symlink?(dir)
+  puts "updating #{dir}..."
+  failures.push(dir) if Version.update(dir) != 0
+  puts
+end
+
+puts "failures: #{failures.join(', ')}" if failures.length > 0
